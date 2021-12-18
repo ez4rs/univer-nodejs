@@ -3,7 +3,7 @@ const {v4:uuid}= require('uuid');
 class Tour {
     constructor({
                     id = uuid(),
-                    title = 'Tour1- Minsk',
+                    title = 'Tour- Minsk',
                     slug = 'user',
                     description = 'good city' ,
                     isActive=true ,

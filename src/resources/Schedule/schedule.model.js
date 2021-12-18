@@ -5,10 +5,10 @@ class Schedule {
                     id = uuid(),
                     Tourid = null,
                     isActive = true,
-                    startDate =new Date('20.01.2020'),
-                    endDate = new Date ('31.12.2020'),
-                    createdAt =  new Date('21.05.2020'),
-                    updatedAt = new Date('30.09.2020')
+                    startDate =new Date(),
+                    endDate = new Date (),
+                    createdAt =  new Date(),
+                    updatedAt = new Date()
 
                 }={})
     {
