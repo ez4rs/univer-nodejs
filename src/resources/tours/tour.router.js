@@ -1,18 +1,19 @@
 const {
     StatusCodes
 } = require('http-status-codes');
-const router = require('express').Router();
-const Price = require('../prices/price.model');
-const Schedule = require('./schedule.model');
 
-const schedulesService = require('./schedule.service');
+const router = require('express').Router();
+const Tour = require('./tour.model');
+const Schedule = require('../prices/price.model');
+
+const toursService = require('./tour.service');
 const catchErrors = require('../../common/catchErrors');
 
 router.route('/').get(
     catchErrors(async (req, res) => {
-        const schedules = await schedulesService.getAll();
+        const tours = await toursService.getAll();
 
-        res.json(schedules.map(Schedule.toResponse));
+        res.json(tours.map(Tour.toResponse));
     })
 );
 
@@ -22,37 +23,37 @@ router.route(':/:id').get(
             id
         } = req.params;
 
-        const schedules = await schedulesService.getById(id);
+        const tour = await toursService.getById(id);
 
-        if (schedules) {
-            res.json(Schedule.toResponse(schedules));
+        if (tour) {
+            res.json(Tour.toResponse(tour));
         } else {
             res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
-                    code: 'SCHEDULE_NOT_FOUND',
-                    msg: 'Schedule not found'
+                    code: 'TOUR_NOT_FOUND',
+                    msg: 'tours not found'
                 });
         }
     })
 );
 
-router.route('/:id/prices').get(
+router.route('/:id/schedules').get(
     catchErrors(async (req, res) => {
         const {
             id
         } = req.params;
 
-        const Schedules = await schedulesService.getPricesByScheduleId(id);
+        const schedules = await toursService.getSchedulesByTourId(id);
 
-        if (Schedules) {
-            res.json(Schedules.map((ord) => Price.toResponse(ord)));
+        if (schedules) {
+            res.json(schedules.map((ord) => Schedule.toResponse(ord)));
         } else {
             res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
-                    code: 'PRICES_NOT_FOUND',
-                    msg: 'Prices not found'
+                    code: 'SCHEDULE_NOT_FOUND',
+                    msg: 'schedules not found'
                 });
         }
     })
@@ -61,31 +62,31 @@ router.route('/:id/prices').get(
 router.route('/').post(
     catchErrors(async (req, res) => {
         const {
-            TourId,
+            title,
+            slug,
+            description,
             isActive,
-            startDate,
-            endDate,
             createdAt,
             updatedAt
         } = req.body;
 
-        const schedule = await schedulesService.createSchedule({
-            TourId,
+        const tour = await toursService.createTour({
+            title,
+            slug,
+            description,
             isActive,
-            startDate,
-            endDate,
             createdAt,
             updatedAt
         });
 
-        if (schedule) {
-            res.status(StatusCodes.CREATED).json(Schedule.toResponse(schedule));
+        if (tour) {
+            res.status(StatusCodes.CREATED).json(Tour.toResponse(tour));
         } else {
             res
                 .status(StatusCodes.BAD_REQUEST)
                 .json({
-                    code: 'SCHEDULE_NOT_CREATED',
-                    msg: 'Schedule not created'
+                    code: 'TOUR_NOT_CREATED',
+                    msg: 'tours not created'
                 });
         }
     })
@@ -97,32 +98,32 @@ router.route(':/:id').put(
             id
         } = req.params;
         const {
-            TourId,
+            title,
+            slug,
+            description,
             isActive,
-            startDate,
-            endDate,
             createdAt,
             updatedAt
         } = req.body;
 
-        const schedule = await schedulesService.updateById({
+        const tour = await toursService.updateById({
             id,
-            TourId,
+            title,
+            slug,
+            description,
             isActive,
-            startDate,
-            endDate,
             createdAt,
             updatedAt
         });
 
-        if (schedule) {
-            res.status(StatusCodes.OK).json(Schedule.toResponse(schedule));
+        if (tour) {
+            res.status(StatusCodes.OK).json(Tour.toResponse(tour));
         } else {
             res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
-                    code: 'SCHEDULES_NOT_FOUND',
-                    msg: 'Schedule not found'
+                    code: 'TOUR_NOT_FOUND',
+                    msg: 'tours not found'
                 });
         }
     })
@@ -134,22 +135,22 @@ router.route('/:id').delete(
             id
         } = req.params;
 
-        const schedule = await schedulesService.deleteById(id);
+        const tour = await toursService.deleteById(id);
 
-        if (!schedule) {
+        if (!tour) {
             return res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
-                    code: 'SCHEDULE_NOT_FOUND',
-                    msg: 'Schedule not found'
+                    code: 'TOUR_NOT_FOUND',
+                    msg: 'TOUR not found'
                 });
         }
 
         return res
             .status(StatusCodes.NO_CONTENT)
             .json({
-                code: 'SCHEDULE_DELETED',
-                msg: 'The Schedule has been deleted'
+                code: 'TOUR_DELETED',
+                msg: 'The tour has been deleted'
             });
     })
 );

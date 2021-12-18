@@ -30,7 +30,7 @@ router.route(':/:id').get(
                 .status(StatusCodes.NOT_FOUND)
                 .json({
                     code: 'PRICE_NOT_FOUND',
-                    msg: 'Price not found'
+                    msg: 'prices not found'
                 });
         }
     })
@@ -60,7 +60,7 @@ router.route('/').post(
                 .status(StatusCodes.BAD_REQUEST)
                 .json({
                     code: 'PRICE_NOT_CREATED',
-                    msg: 'Price not created'
+                    msg: 'prices not created'
                 });
         }
     })
@@ -95,7 +95,7 @@ router.route(':/:id').put(
                 .status(StatusCodes.NOT_FOUND)
                 .json({
                     code: 'PRICE_NOT_FOUND',
-                    msg: 'Price not found'
+                    msg: 'prices not found'
                 });
         }
     })
@@ -114,7 +114,7 @@ router.route('/:id').delete(
                 .status(StatusCodes.NOT_FOUND)
                 .json({
                     code: 'PRICE_NOT_FOUND',
-                    msg: 'Price not found'
+                    msg: 'prices not found'
                 });
         }
 
