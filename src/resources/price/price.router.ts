@@ -1,27 +1,29 @@
-const {
-    StatusCodes
-} = require('http-status-codes');
-const router = require('express').Router();
-const Price = require('./price.model');
+import { StatusCodes } from 'http-status-codes';
+import { Request, Response, Router } from 'express';
 
-const pricesService = require('./price.service');
-const catchErrors = require('../../common/catchErrors');
+
+import Price from './price.model';
+
+import pricesService from './price.service';
+import catchErrors from '../../common/catchErrors';
+
+const router = Router();
 
 router.route('/').get(
-    catchErrors(async (req, res) => {
+    catchErrors(async (_req: Request, res: Response) => {
         const prices = await pricesService.getAll();
 
         res.json(prices.map(Price.toResponse));
     })
 );
 
-router.route(':/:id').get(
-    catchErrors(async (req, res) => {
+router.route('/:id').get(
+    catchErrors(async (req: Request, res: Response) => {
         const {
             id
         } = req.params;
 
-        const price = await pricesService.getById(id);
+        const price = await pricesService.getById(id || '');
 
         if (price) {
             res.json(Price.toResponse(price));
@@ -29,15 +31,15 @@ router.route(':/:id').get(
             res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
-                    code: 'PRICE_NOT_FOUND',
-                    msg: 'prices not found'
+                    code: 'PRODUCT_NOT_FOUND',
+                    msg: 'Product not found'
                 });
         }
     })
 );
 
 router.route('/').post(
-    catchErrors(async (req, res) => {
+    catchErrors(async (req: Request, res: Response) => {
         const {
             scheduleId,
             priceValue,
@@ -46,7 +48,7 @@ router.route('/').post(
             updatedAt
         } = req.body;
         const price = await pricesService.createPrice({
-            scheduleId,
+            scheduleId: scheduleId || '',
             priceValue,
             priceCurrency,
             createdAt,
@@ -60,14 +62,14 @@ router.route('/').post(
                 .status(StatusCodes.BAD_REQUEST)
                 .json({
                     code: 'PRICE_NOT_CREATED',
-                    msg: 'prices not created'
+                    msg: 'PRICE not created'
                 });
         }
     })
 );
 
-router.route(':/:id').put(
-    catchErrors(async (req, res) => {
+router.route('/:id').put(
+    catchErrors(async (req: Request, res: Response) => {
         const {
             id
         } = req.params;
@@ -80,8 +82,8 @@ router.route(':/:id').put(
         } = req.body;
 
         const price = await pricesService.updateById({
-            id,
-            scheduleId,
+            id: id || '',
+            scheduleId: scheduleId || '',
             priceValue,
             priceCurrency,
             createdAt,
@@ -95,26 +97,26 @@ router.route(':/:id').put(
                 .status(StatusCodes.NOT_FOUND)
                 .json({
                     code: 'PRICE_NOT_FOUND',
-                    msg: 'prices not found'
+                    msg: 'PRICE not found'
                 });
         }
     })
 );
 
 router.route('/:id').delete(
-    catchErrors(async (req, res) => {
+    catchErrors(async (req: Request, res: Response) => {
         const {
             id
         } = req.params;
 
-        const price = await pricesService.deleteById(id);
+        const price = await pricesService.deleteById(id || '');
 
         if (!price) {
             return res
                 .status(StatusCodes.NOT_FOUND)
                 .json({
                     code: 'PRICE_NOT_FOUND',
-                    msg: 'prices not found'
+                    msg: 'PRICE not found'
                 });
         }
 
@@ -127,4 +129,4 @@ router.route('/:id').delete(
     })
 );
 
-module.exports = router;
+export default router;
